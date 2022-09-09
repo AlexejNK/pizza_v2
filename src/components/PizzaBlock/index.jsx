@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function PizzaBlock({ name, imageUrl, types, sizes, price }) {
+function PizzaBlock({ title, imageUrl, types, sizes, price }) {
   const typeNames = ['тонкое', 'традиционное'];
   const [activeType, setActiveType] = useState(0);
   const [activeSize, setActiveSize] = useState(0);
@@ -16,7 +16,7 @@ function PizzaBlock({ name, imageUrl, types, sizes, price }) {
   return (
     <div className="pizza-block">
       <img className="pizza-block__image" src={imageUrl} alt="Pizza" />
-      <h4 className="pizza-block__title">{name}</h4>
+      <h4 className="pizza-block__title">{title}</h4>
       <div className="pizza-block__selector">
         <ul>
           {types.map((type, index) => (
@@ -37,9 +37,6 @@ function PizzaBlock({ name, imageUrl, types, sizes, price }) {
               {size} см.
             </li>
           ))}
-          {/* <li className="active">26 см.</li>
-          <li>30 см.</li>
-          <li>40 см.</li> */}
         </ul>
       </div>
       <div className="pizza-block__bottom">

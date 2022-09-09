@@ -24,18 +24,17 @@
   &__popup {
     position: absolute;
     right: 0;
-    margin-top: 15px;
+    margin-top: 5px;
     background: #ffffff;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.09);
     border-radius: 10px;
     overflow: hidden;
     padding: 10px 0;
-    width: 160px;
 
     ul {
       overflow: hidden;
       li {
-        padding: 12px 20px;
+        padding: 5px 10px;
         cursor: pointer;
 
         &.active,
