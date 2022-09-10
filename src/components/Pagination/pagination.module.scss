@@ -1,0 +1,22 @@
+.container {
+  display: block;
+  margin: 0 auto;
+  width: 300px;
+
+  li {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #fe5fe1;
+    border-radius: 30px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+}
+:global {
+  .selected {
+    background-color: #fe5fe1;
+    a {
+      color: #fff;
+    }
+  }
+}
