@@ -11,6 +11,7 @@ import Pagination from '../components/Pagination';
 import { SearchContext } from '../App';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
+import { setItems } from '../redux/slices/pizzaSlice';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -18,9 +19,9 @@ const Home = () => {
   const dispatch = useDispatch();
   const isSearch = useRef(false);
   const isMounted = useRef(false);
+  const items = useSelector((state) => state.pizza.items);
 
   const { searchValue } = React.useContext(SearchContext);
-  const [pizzas, setPizzas] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const onChangeCategory = (id) => {
     dispatch(setCategoryId(id));
@@ -29,20 +30,35 @@ const Home = () => {
     dispatch(setCurrentPage(number));
   };
 
-  const fetchPizzas = () => {
+  async function fetchPizzas() {
     setIsLoading(true);
     const order = sort.sortProperty.includes('-') ? 'asc' : 'desc';
     const sortBy = sort.sortProperty.replace('-', '');
     const category = categoryId > 0 ? `category=${categoryId}` : '';
-    axios
-      .get(
+    try {
+      const { data } = await axios.get(
         `https://6318eb356b4c78d91b326e17.mockapi.io/index?page=${currentPage}&${category}&sortBy=${sortBy}&order=${order}`,
-      )
-      .then((resp) => {
-        setPizzas(resp.data);
-        setIsLoading(false);
+      );
+      dispatch(setItems(data));
+    } catch (error) {
+      console.log('Error', error);
+    } finally {
+      setIsLoading(false);
+    }
+    window.scrollTo(0, 0);
+  }
+
+  React.useEffect(() => {
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sort.sortProperty,
+        categoryId,
+        currentPage,
       });
-  };
+      navigate(`?${queryString}`);
+    }
+    isMounted.current = true;
+  }, [categoryId, sort.sortProperty, currentPage, navigate]);
 
   React.useEffect(() => {
     if (window.location.search) {
@@ -56,7 +72,7 @@ const Home = () => {
       );
       isSearch.current = true;
     }
-  }, []);
+  }, [dispatch]);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -66,19 +82,7 @@ const Home = () => {
     isSearch.current = false;
   }, [categoryId, sort.sortProperty, currentPage]);
 
-  React.useEffect(() => {
-    if (isMounted.current) {
-      const queryString = qs.stringify({
-        sortProperty: sort.sortProperty,
-        categoryId,
-        currentPage,
-      });
-      navigate(`?${queryString}`);
-    }
-    isMounted.current = true;
-  }, [categoryId, sort.sortProperty, currentPage]);
-
-  const pizzasSearch = pizzas
+  const pizzasSearch = items
     .filter((obj) => {
       if (obj.title.toLowerCase().includes(searchValue.toLowerCase())) {
         return true;
